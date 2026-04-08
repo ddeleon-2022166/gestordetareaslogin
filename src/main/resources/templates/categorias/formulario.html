@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${categoria.id == null ? 'Nueva Categoría' : 'Editar Categoría'} + ' - Gestor de Tareas'">Formulario Categoría</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<!-- Navegación -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="/home">
+            <i class="fas fa-tasks"></i> Gestor de Tareas
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/home">
+                        <i class="fas fa-home"></i> Inicio
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/tareas">
+                        <i class="fas fa-list-check"></i> Tareas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/categorias">
+                        <i class="fas fa-tags"></i> Categorías
+                    </a>
+                </li>
+            </ul>
+
+            <div class="navbar-nav">
+                    <span class="navbar-text me-3">
+                        <i class="fas fa-user"></i>
+                        <span th:text="${session.usuario.nombre}">Usuario</span>
+                    </span>
+                <a class="btn btn-outline-light btn-sm" href="/auth/logout">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Contenido principal -->
+<main class="py-4">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-tag"></i>
+                            <span th:text="${categoria.id == null ? 'Nueva Categoría' : 'Editar Categoría'}">Formulario</span>
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/categorias/guardar}" th:object="${categoria}" method="post">
+                            <input type="hidden" th:field="*{id}">
+
+                            <div class="mb-3">
+                                <label for="nombre" class="form-label">
+                                    <i class="fas fa-tag"></i> Nombre de la categoría
+                                </label>
+                                <input type="text" class="form-control" id="nombre"
+                                       th:field="*{nombre}" required>
+                                <div th:if="${#fields.hasErrors('nombre')}" class="text-danger small">
+                                    <span th:errors="*{nombre}"></span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="descripcion" class="form-label">
+                                    <i class="fas fa-align-left"></i> Descripción
+                                </label>
+                                <textarea class="form-control" id="descripcion"
+                                          th:field="*{descripcion}" rows="3"></textarea>
+                                <div th:if="${#fields.hasErrors('descripcion')}" class="text-danger small">
+                                    <span th:errors="*{descripcion}"></span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-palette"></i> Color
+                                </label>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <select class="form-select" th:field="*{color}">
+                                            <option value="#3498db" selected>🔵 Azul</option>
+                                            <option value="#2ecc71">🟢 Verde</option>
+                                            <option value="#e74c3c">🔴 Rojo</option>
+                                            <option value="#f39c12">🟡 Naranja</option>
+                                            <option value="#9b59b6">🟣 Morado</option>
+                                            <option value="#1abc9c">🟢 Turquesa</option>
+                                            <option value="#e67e22">🟠 Naranja oscuro</option>
+                                            <option value="#95a5a6">⚪ Gris</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="color-preview"
+                                             th:style="'width: 100%; height: 38px; background: ' + (${categoria.color != null ? categoria.color : '#3498db'}) + '; border-radius: 5px; border: 1px solid #ddd;'">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a href="/categorias" class="btn btn-secondary me-md-2">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i>
+                                    <span th:text="${categoria.id == null ? 'Guardar' : 'Actualizar'}">Guardar</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Actualizar preview del color cuando se selecciona
+    document.querySelector('select[name="color"]').addEventListener('change', function() {
+        document.querySelector('.color-preview').style.backgroundColor = this.value;
+    });
+</script>
+</body>
+</html>

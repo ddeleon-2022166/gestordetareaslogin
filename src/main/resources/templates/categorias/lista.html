@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categorías - Gestor de Tareas</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<!-- Navegación -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="/home">
+            <i class="fas fa-tasks"></i> Gestor de Tareas
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/home">
+                        <i class="fas fa-home"></i> Inicio
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/tareas">
+                        <i class="fas fa-list-check"></i> Tareas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/categorias">
+                        <i class="fas fa-tags"></i> Categorías
+                    </a>
+                </li>
+            </ul>
+
+            <div class="navbar-nav">
+                    <span class="navbar-text me-3">
+                        <i class="fas fa-user"></i>
+                        <span th:text="${session.usuario.nombre}">Usuario</span>
+                    </span>
+                <a class="btn btn-outline-light btn-sm" href="/auth/logout">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Contenido principal -->
+<main class="py-4">
+    <div class="container">
+        <!-- Mensajes flash -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+            <i class="fas fa-check-circle"></i> <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+            <i class="fas fa-exclamation-circle"></i> <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Cabecera -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>
+                <i class="fas fa-tags text-primary"></i>
+                Mis Categorías
+            </h1>
+            <a href="/categorias/nueva" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Nueva Categoría
+            </a>
+        </div>
+
+        <!-- Lista de categorías -->
+        <div class="card">
+            <div class="card-body">
+                <div th:if="${#lists.isEmpty(categorias)}" class="text-center py-5">
+                    <i class="fas fa-tags fa-4x text-muted mb-3"></i>
+                    <h4>No hay categorías creadas</h4>
+                    <p class="text-muted">Crea tu primera categoría para organizar tus tareas</p>
+                    <a href="/categorias/nueva" class="btn btn-primary mt-2">
+                        <i class="fas fa-plus"></i> Crear Categoría
+                    </a>
+                </div>
+
+                <div th:if="${!#lists.isEmpty(categorias)}" class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Color</th>
+                            <th>Tareas</th>
+                            <th>Fecha Creación</th>
+                            <th>Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="categoria : ${categorias}">
+                            <td>
+                                <strong th:text="${categoria.nombre}">Nombre</strong>
+                            </td>
+                            <td>
+                                <span th:text="${categoria.descripcion}">Descripción</span>
+                            </td>
+                            <td>
+                                <div th:style="'width: 30px; height: 30px; background: ' + ${categoria.color != null ? categoria.color : '#3498db'} + '; border-radius: 5px;'"></div>
+                            </td>
+                            <td>
+                                        <span class="badge bg-secondary">
+                                            <span th:text="${categoria.cantidadTareas}">0</span> tareas
+                                        </span>
+                            </td>
+                            <td>
+                                <small th:text="${#temporals.format(categoria.fechaCreacion, 'dd/MM/yyyy')}">Fecha</small>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a th:href="@{/categorias/editar/{id}(id=${categoria.id})}"
+                                       class="btn btn-outline-primary" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a th:href="@{/categorias/eliminar/{id}(id=${categoria.id})}"
+                                       class="btn btn-outline-danger"
+                                       onclick="return confirm('¿Estás seguro de eliminar esta categoría?')"
+                                       title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
